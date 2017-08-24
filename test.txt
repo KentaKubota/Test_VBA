@@ -1,0 +1,264 @@
+************************************************************
+・tag エクセル　VBA
+
+------------------------------
+Sub sample1()
+
+    Range("A1").Select  'A1 select
+    ActiveCell.FormulaR1C1 = "こんにちは" 'input hello on A1
+    Range("A1").Select 'A1を選択
+    Selection.Cut 選択されているところをカットする
+    Range("C1").Select C1を選択
+    ActiveSheet.Paste C1ニペーストする
+
+End Sub
+------------
+=
+
+sub intro()
+    range("A1").Value = "konitia"
+    Range("A1").Cut Destination:=Range("C1")
+end sub
+
+------------------------------
+
+Sub intoro() ここからプログラムが始まる
+
+END sub ここで終わる
+------------------------------
+セルを指定する
+range("a1") セル指定
+
+cells(行番号、列番号)
+cells(1、1) a1セルと同値
+
+------------------------------
+
+range("a1").Value = "heelo" A1の値にhelloを代入
+range("a1").Cut = "heelo" A1の値を
+    Destination:=対象セル　目的地という意味
+
+a1乗せるを切り取りし、c1乗せるに貼り付ける
+range("a1").cut destination:=range("c1")
+
+------------------------------
+モジュールを出す。　モジュールにプログラムを書く。そうすることで、色々なシートで使える
+関数になる
+    右クリック、挿入、モジュール
+------------------------------
+
+sub list()
+    'k-l列を削除する
+    columns("K:L").Delete 'shift:=XlToLeft  あってもなくても良い
+
+    'e-f列を削除する
+    columns("E:F").Delete 
+
+    'c列を削除する
+    columns("C").Delete 
+
+    'c列の左に1列追加する
+    columns("C").Insert 'shift:=XlToLeft  あってもなくても良い
+
+
+    'h列の生年月日をC列に切り取って貼り付ける
+    columns("H").Cut Destination:=Range("C1")
+end sub
+------------------------------
+引数を指定するには := を入力する
+.Delete shift:=xlToLeft
+shiftは指定した方向に移動するということ
+
+deleteメソッドの引数の定数
+.Delete shift:=xlToRight
+.Delete shift:=xlUp
+.Delete shift:=xlDown
+
+------------------------------
+
+Sub list()
+
+    dim i as long '変数
+    dim last as long 
+
+    'K-L列を削除して、左に詰める
+    Columns("K:L").Delete shift:=xlToLeft
+
+    'E-F列を削除して、左に詰める
+    Columns("E:F").Delete shift:=xlToLeft
+
+    'C列を削除して、左に詰める
+    Columns("C").Delete shift:=xlToLeft
+        
+    'C列に1列追加して、右へ動かす
+    Columns("C").Insert shift:=xlToRight
+
+    'H列をコピーして、C列に貼り付ける
+    Columns("H").Cut Destination:=Range("C1")
+
+
+    '生年月日を年月日に分ける
+    'C-E列を選択した状態で、列を挿入する（3列追加される）
+    Columns("c:e").insert shift:=xlToLeft
+
+
+
+    '1行目に項目名を入れる
+    range("c1").Value = "年" 
+    range("d1").Value = "月" 
+    range("e1").Value = "日" 
+
+    '2行目以降にそれぞれ年月火を入れる
+    '1997/05/45 から取り出す
+    'range("c2").Value = year(range("f2"))
+    'range("d2").Value = month(range("f2"))
+    'range("e2").Value = day(range("f2"))
+
+    '変数
+    last = cells(rows.count,1).end(xlup).row
+
+
+    '2行目以降にそれぞれ年月火を入れる
+    '1997/05/45 から取り出す
+    'for 変数　= 開始　to 終了
+    '繰り返すプログラムを書く
+    'next
+    for i = 2 to cells(rows.count,1).end(xlup).row 'rows.countは最終行を意味する end(xlup)で、下から一番上のセルを選択
+        'cells(2,3).Value = year(cells(2,6))  cells(2,3)=c2 cells(2,6)=f2
+        cells(i,3).Value=year(cells(i,6))
+        cells(i,4).Value=month(cells(i,6))
+        cells(i,5).Value=day(cells(i,6))
+    next
+
+
+    '変数
+    last = cells(rows.count,1).end(xlup).row
+
+    '表示形式を標準にする
+    range(cells(2,3),cells(last,5)).numberformatlocal = "標準"
+
+    'f列を削除して、左に詰める
+    Columns("f").Delete shift:=xlToLeft
+
+'------------------------------
+
+    '郵便番号を3桁と4桁に分ける
+    'g-h列を選択した状態で、列を挿入する（2列追加される）
+    Columns("g:h").insert shift:=xlToLeft
+
+
+    '1行目に項目名を入れる
+    range("g1").Value = "郵便番号1" 
+    range("h1").Value = "郵便番号2" 
+
+    '2行目以降にそれぞれ郵便番号を入れる
+    for i = 2 to last
+        'cells(i,7).Value = left(cells(i,9),3) '左から三文字
+        'cells(i,8).Value = right(cells(i,9),4) '右から三文字
+
+        '先頭が001の時、1にならないように、文字列認識させる
+        cells(i,7).Value = "'" & left(cells(i,9),3) '左から三文字
+        cells(i,8).Value = "'" & right(cells(i,9),4) '右から三文字
+    next
+
+    'i列を削除する
+    Columns("i").Delete shift:=xlToLeft
+
+
+    '住所1から都道府県名を抜き出す
+'------------------------------
+
+    '郵便番号を3桁と4桁に分ける
+    'i-j列を選択した状態で、列を挿入する（2列追加される）
+    Columns("i:j").insert shift:=xlToLeft
+
+
+    '1行目に項目名を入れる
+    range("i1").Value = "都道府県" 
+    range("j1").Value = "住所1" 
+
+
+    '2行目以降にそれぞれ都道府県を入れる
+    for i = 2 to last
+        if mid(cells(i,11).value,4,1) = "県" then 'k2
+            cells(i,9).value = left(cells(i,11),4)
+            cells(i,10).value = right(cells(i,11), len(cells(i,11)) - 4) 
+        else
+            cells(i,9).value = left(cells(i,11),3)
+            cells(i,10).value = right(cells(i,11), len(cells(i,11)) - 3) 
+        end if
+    next
+
+    'k列を削除する
+    Columns("k").Delete shift:=xlToLeft
+
+
+    '列の幅を自動調整する
+    columns("a:k").autofit
+
+End Sub
+
+------------------------------
+一番最後の行を選択する
+Aを選択してctrl + 下矢印
+    空白があるとそこが最後になる
+------------------------------
+セルを選択して、右クリック、セルの書式設定、表示形式でセルの文字がなんの型タイプになっているかわかる
+------------------------------
+変数
+変数を使うときは、宣言する
+dim 変数 as 型
+
+型の種類
+variant すべてのものが入る
+long 数値が入る
+string 文字が入る
+
+as 型を省略するとvariantになる
+------------------------------
+変数の宣言を強制するモード
+option explicit
+変数名を間違えていると、正しく動作しない
+
+設定の仕方
+オプション、変数の宣言を強制するにチェックを入れる
+
+------------------------------
+cells（行番号、列番号）
+------------------------------
+最終行の取得
+cells(rows,count,1).end(xlup).row
+rows,countは最終行を意味する
+
+a1048576から、上方向(xlup)に検索して、一番最初に文字が入っている行番号
+
+------------------------------
+
+left 左から指定された文字列を抜き出す
+left(セルの指定、文字数) 
+
+right 右から指定された文字列を抜き出す
+right(セルの指定、文字数) 
+
+------------------------------
+住所の分別
+47都道府県は三文字と四文字であることを利用する
+四文字は3つしかない
+神奈川県
+和歌山県
+鹿児島県　四文字目が県という漢字である
+
+------------------------------
+mid 途中から指定された文字数を抜き出す
+mid(セルの指定、開始位置、文字数)
+
+len 文字の数を数える
+len(セルの指定)
+------------------------------
+ステップイン　1行ずつプログラムを実行
+sub list()を選択して　f8を押す
+
+ブレイクポイント
+行の横をクリックするとそこまでプログラムを動かすことができる
+------------------------------
+
